@@ -22,22 +22,17 @@ Fixie Bot is a simple chatbot powered by MemGPT that integrates with the Telegra
     pip install -r requirements.txt
     ```
 
-4. Create a `.env` file in the project root with the following content:
-
-    ```env
-    TELEGRAM_TOKEN=YOUR_TELEGRAM_BOT_TOKEN
-    AGENT_ID=YOUR_AGENT_ID
-    ```
-
-    Replace `YOUR_TELEGRAM_BOT_TOKEN` with your Telegram Bot API token and `YOUR_AGENT_ID` with the agent ID obtained from running `create_agent.py`.
-
-5. Run `create_agent.py` to generate a MemGPT agent:
+4. Run `create_agent.py` to generate a MemGPT agent:
 
     ```bash
     python create_agent.py
     ```
 
-   Copy the generated agent ID and update the `.env` file with the new values.
+   Copy the generated agent ID.
+
+5. Head into `.env` file in the project root:
+
+   Replace `YOUR_TELEGRAM_BOT_TOKEN` with your Telegram Bot API token and `YOUR_AGENT_ID` with the agent ID obtained from running `create_agent.py`.
 
 6. Now, you can run the bot using `bot.py`:
 
