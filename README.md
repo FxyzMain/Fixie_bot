@@ -7,7 +7,7 @@ Fixie Bot is a simple chatbot powered by MemGPT that integrates with the Telegra
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/lydacious/fixie_bot.git
+    git clone https://github.com/FxyzMain/fixie_bot.git
     ```
 
 2. Change into the project directory:
