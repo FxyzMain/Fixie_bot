@@ -1,0 +1,1205 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "MemGPT API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/auth": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Authenticate User",
+        "description": "Authenticates the user and sends response with User related data.\n\nCurrently, this is a placeholder that simply returns a UUID placeholder",
+        "operationId": "authenticate_user_api_auth_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agents/command": {
+      "post": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Run Command",
+        "description": "Execute a command on a specified agent.\n\nThis endpoint receives a command to be executed on an agent. It uses the user and agent identifiers to authenticate and route the command appropriately.\n\nRaises an HTTPException for any processing errors.",
+        "operationId": "run_command_api_agents_command_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommandRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agents/config": {
+      "get": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Get Agent Config",
+        "description": "Retrieve the configuration for a specific agent.\n\nThis endpoint fetches the configuration details for a given agent, identified by the user and agent IDs.",
+        "operationId": "get_agent_config_api_agents_config_get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Unique identifier of the user requesting the config.",
+              "title": "User Id"
+            },
+            "description": "Unique identifier of the user requesting the config."
+          },
+          {
+            "name": "agent_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Unique identifier of the agent whose config is requested.",
+              "title": "Agent Id"
+            },
+            "description": "Unique identifier of the agent whose config is requested."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentConfigResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agents/rename": {
+      "patch": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Update Agent Name",
+        "description": "Updates the name of a specific agent.\n\nThis changes the name of the agent in the database but does NOT edit the agent's persona.",
+        "operationId": "update_agent_name_api_agents_rename_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentRenameRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentConfigResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agents": {
+      "delete": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Delete Agent",
+        "description": "Delete an agent.",
+        "operationId": "delete_agent_api_agents_delete",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Unique identifier of the user requesting the deletion.",
+              "title": "User Id"
+            },
+            "description": "Unique identifier of the user requesting the deletion."
+          },
+          {
+            "name": "agent_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Unique identifier of the agent to be deleted.",
+              "title": "Agent Id"
+            },
+            "description": "Unique identifier of the agent to be deleted."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "List Agents",
+        "description": "List all agents associated with a given user.\n\nThis endpoint retrieves a list of all agents and their configurations associated with the specified user ID.",
+        "operationId": "list_agents_api_agents_get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Unique identifier of the user.",
+              "title": "User Id"
+            },
+            "description": "Unique identifier of the user."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListAgentsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Create Agent",
+        "description": "Create a new agent with the specified configuration.",
+        "operationId": "create_agent_api_agents_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAgentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateAgentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agents/memory": {
+      "get": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Get Agent Memory",
+        "description": "Retrieve the memory state of a specific agent.\n\nThis endpoint fetches the current memory state of the agent identified by the user ID and agent ID.",
+        "operationId": "get_agent_memory_api_agents_memory_get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The unique identifier of the user.",
+              "title": "User Id"
+            },
+            "description": "The unique identifier of the user."
+          },
+          {
+            "name": "agent_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The unique identifier of the agent.",
+              "title": "Agent Id"
+            },
+            "description": "The unique identifier of the agent."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAgentMemoryResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Update Agent Memory",
+        "description": "Update the core memory of a specific agent.\n\nThis endpoint accepts new memory contents (human and persona) and updates the core memory of the agent identified by the user ID and agent ID.",
+        "operationId": "update_agent_memory_api_agents_memory_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAgentMemoryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateAgentMemoryResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agents/message": {
+      "get": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Get Agent Messages",
+        "description": "Retrieve the in-context messages of a specific agent. Paginated, provide start and count to iterate.",
+        "operationId": "get_agent_messages_api_agents_message_get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The unique identifier of the user.",
+              "title": "User Id"
+            },
+            "description": "The unique identifier of the user."
+          },
+          {
+            "name": "agent_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The unique identifier of the agent.",
+              "title": "Agent Id"
+            },
+            "description": "The unique identifier of the agent."
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "Message index to start on (reverse chronological).",
+              "title": "Start"
+            },
+            "description": "Message index to start on (reverse chronological)."
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "How many messages to retrieve.",
+              "title": "Count"
+            },
+            "description": "How many messages to retrieve."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAgentMessagesResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Send Message",
+        "description": "Process a user message and return the agent's response.\n\nThis endpoint accepts a message from a user and processes it through the agent.\nIt can optionally stream the response if 'stream' is set to True.",
+        "operationId": "send_message_api_agents_message_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserMessageRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserMessageResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/humans": {
+      "get": {
+        "tags": [
+          "humans"
+        ],
+        "summary": "List Humans",
+        "operationId": "list_humans_api_humans_get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Unique identifier of the user.",
+              "title": "User Id"
+            },
+            "description": "Unique identifier of the user."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListHumansResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/personas": {
+      "get": {
+        "tags": [
+          "personas"
+        ],
+        "summary": "List Personas",
+        "operationId": "list_personas_api_personas_get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Unique identifier of the user.",
+              "title": "User Id"
+            },
+            "description": "Unique identifier of the user."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListPersonasResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/models": {
+      "get": {
+        "tags": [
+          "models"
+        ],
+        "summary": "List Models",
+        "operationId": "list_models_api_models_get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Unique identifier of the user.",
+              "title": "User Id"
+            },
+            "description": "Unique identifier of the user."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListModelsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/config": {
+      "get": {
+        "tags": [
+          "config"
+        ],
+        "summary": "Get Server Config",
+        "description": "Retrieve the base configuration for the server.",
+        "operationId": "get_server_config_api_config_get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Unique identifier of the user requesting the config.",
+              "title": "User Id"
+            },
+            "description": "Unique identifier of the user requesting the config."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AgentConfigResponse": {
+        "properties": {
+          "config": {
+            "type": "object",
+            "title": "Config",
+            "description": "The agent configuration object."
+          }
+        },
+        "type": "object",
+        "required": [
+          "config"
+        ],
+        "title": "AgentConfigResponse"
+      },
+      "AgentRenameRequest": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id",
+            "description": "Unique identifier of the user requesting the config."
+          },
+          "agent_id": {
+            "type": "string",
+            "title": "Agent Id",
+            "description": "Unique identifier of the agent whose config is requested."
+          },
+          "agent_name": {
+            "type": "string",
+            "title": "Agent Name",
+            "description": "New name for the agent."
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "agent_id",
+          "agent_name"
+        ],
+        "title": "AgentRenameRequest"
+      },
+      "AuthResponse": {
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Uuid",
+            "description": "UUID of the user"
+          }
+        },
+        "type": "object",
+        "required": [
+          "uuid"
+        ],
+        "title": "AuthResponse"
+      },
+      "CommandRequest": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id",
+            "description": "Unique identifier of the user issuing the command."
+          },
+          "agent_id": {
+            "type": "string",
+            "title": "Agent Id",
+            "description": "Identifier of the agent on which the command will be executed."
+          },
+          "command": {
+            "type": "string",
+            "title": "Command",
+            "description": "The command to be executed by the agent."
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "agent_id",
+          "command"
+        ],
+        "title": "CommandRequest"
+      },
+      "CommandResponse": {
+        "properties": {
+          "response": {
+            "type": "string",
+            "title": "Response",
+            "description": "The result of the executed command."
+          }
+        },
+        "type": "object",
+        "required": [
+          "response"
+        ],
+        "title": "CommandResponse"
+      },
+      "ConfigResponse": {
+        "properties": {
+          "config": {
+            "type": "object",
+            "title": "Config",
+            "description": "The server configuration object."
+          }
+        },
+        "type": "object",
+        "required": [
+          "config"
+        ],
+        "title": "ConfigResponse"
+      },
+      "CoreMemory": {
+        "properties": {
+          "human": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Human",
+            "description": "Human element of the core memory."
+          },
+          "persona": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Persona",
+            "description": "Persona element of the core memory."
+          }
+        },
+        "type": "object",
+        "title": "CoreMemory"
+      },
+      "CreateAgentRequest": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id",
+            "description": "Unique identifier of the user issuing the command."
+          },
+          "config": {
+            "type": "object",
+            "title": "Config",
+            "description": "The agent configuration object."
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "config"
+        ],
+        "title": "CreateAgentRequest"
+      },
+      "CreateAgentResponse": {
+        "properties": {
+          "agent_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Agent Id",
+            "description": "Unique identifier of the newly created agent."
+          }
+        },
+        "type": "object",
+        "required": [
+          "agent_id"
+        ],
+        "title": "CreateAgentResponse"
+      },
+      "GetAgentMemoryResponse": {
+        "properties": {
+          "core_memory": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CoreMemory"
+              }
+            ],
+            "description": "The state of the agent's core memory."
+          },
+          "recall_memory": {
+            "type": "integer",
+            "title": "Recall Memory",
+            "description": "Size of the agent's recall memory."
+          },
+          "archival_memory": {
+            "type": "integer",
+            "title": "Archival Memory",
+            "description": "Size of the agent's archival memory."
+          }
+        },
+        "type": "object",
+        "required": [
+          "core_memory",
+          "recall_memory",
+          "archival_memory"
+        ],
+        "title": "GetAgentMemoryResponse"
+      },
+      "GetAgentMessagesResponse": {
+        "properties": {
+          "messages": {
+            "items": {},
+            "type": "array",
+            "title": "Messages",
+            "description": "List of message objects."
+          }
+        },
+        "type": "object",
+        "required": [
+          "messages"
+        ],
+        "title": "GetAgentMessagesResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ListAgentsResponse": {
+        "properties": {
+          "num_agents": {
+            "type": "integer",
+            "title": "Num Agents",
+            "description": "The number of agents available to the user."
+          },
+          "agents": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Agents",
+            "description": "List of agent configurations."
+          }
+        },
+        "type": "object",
+        "required": [
+          "num_agents",
+          "agents"
+        ],
+        "title": "ListAgentsResponse"
+      },
+      "ListHumansResponse": {
+        "properties": {
+          "humans": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Humans",
+            "description": "List of human configurations."
+          }
+        },
+        "type": "object",
+        "required": [
+          "humans"
+        ],
+        "title": "ListHumansResponse"
+      },
+      "ListModelsResponse": {
+        "properties": {
+          "models": {
+            "items": {
+              "$ref": "#/components/schemas/Model"
+            },
+            "type": "array",
+            "title": "Models",
+            "description": "List of model configurations."
+          }
+        },
+        "type": "object",
+        "required": [
+          "models"
+        ],
+        "title": "ListModelsResponse"
+      },
+      "ListPersonasResponse": {
+        "properties": {
+          "personas": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Personas",
+            "description": "List of persona configurations."
+          }
+        },
+        "type": "object",
+        "required": [
+          "personas"
+        ],
+        "title": "ListPersonasResponse"
+      },
+      "MessageRoleType": {
+        "type": "string",
+        "enum": [
+          "user",
+          "system"
+        ],
+        "title": "MessageRoleType"
+      },
+      "Model": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "The name of the model."
+          },
+          "endpoint": {
+            "type": "string",
+            "title": "Endpoint",
+            "description": "Endpoint URL for the model."
+          },
+          "endpoint_type": {
+            "type": "string",
+            "title": "Endpoint Type",
+            "description": "Type of the model endpoint."
+          },
+          "wrapper": {
+            "type": "string",
+            "title": "Wrapper",
+            "description": "Wrapper used for the model."
+          },
+          "context_window": {
+            "type": "integer",
+            "title": "Context Window",
+            "description": "Context window size for the model."
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "endpoint",
+          "endpoint_type",
+          "context_window"
+        ],
+        "title": "Model"
+      },
+      "UpdateAgentMemoryRequest": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id",
+            "description": "The unique identifier of the user."
+          },
+          "agent_id": {
+            "type": "string",
+            "title": "Agent Id",
+            "description": "The unique identifier of the agent."
+          },
+          "human": {
+            "type": "string",
+            "title": "Human",
+            "description": "Human element of the core memory."
+          },
+          "persona": {
+            "type": "string",
+            "title": "Persona",
+            "description": "Persona element of the core memory."
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "agent_id"
+        ],
+        "title": "UpdateAgentMemoryRequest"
+      },
+      "UpdateAgentMemoryResponse": {
+        "properties": {
+          "old_core_memory": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CoreMemory"
+              }
+            ],
+            "description": "The previous state of the agent's core memory."
+          },
+          "new_core_memory": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CoreMemory"
+              }
+            ],
+            "description": "The updated state of the agent's core memory."
+          }
+        },
+        "type": "object",
+        "required": [
+          "old_core_memory",
+          "new_core_memory"
+        ],
+        "title": "UpdateAgentMemoryResponse"
+      },
+      "UserMessageRequest": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id",
+            "description": "The unique identifier of the user."
+          },
+          "agent_id": {
+            "type": "string",
+            "title": "Agent Id",
+            "description": "The unique identifier of the agent."
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "The message content to be processed by the agent."
+          },
+          "stream": {
+            "type": "boolean",
+            "title": "Stream",
+            "description": "Flag to determine if the response should be streamed. Set to True for streaming.",
+            "default": false
+          },
+          "role": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MessageRoleType"
+              }
+            ],
+            "description": "Role of the message sender (either 'user' or 'system')",
+            "default": "user"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "agent_id",
+          "message"
+        ],
+        "title": "UserMessageRequest"
+      },
+      "UserMessageResponse": {
+        "properties": {
+          "messages": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Messages",
+            "description": "List of messages generated by the agent in response to the received message."
+          }
+        },
+        "type": "object",
+        "required": [
+          "messages"
+        ],
+        "title": "UserMessageResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8283"
+    }
+  ]
+}
